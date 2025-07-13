@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Moon, Sun, Github, Linkedin, Mail, MapPin, Download, ExternalLink, Calendar, GraduationCap, Briefcase, Code, Award, Target, Trophy, Phone, Camera, Image, X, ChevronLeft, ChevronRight, Palette } from 'lucide-react';
+import { Moon, Sun, Github, Linkedin, Mail, MapPin, Download, ExternalLink, Calendar, GraduationCap, Briefcase, Code, Award, Target, Trophy, Phone, Camera, Image, X, ChevronLeft, ChevronRight, Palette, Instagram, MessageCircle } from 'lucide-react';
 
 // Animation Hook for scroll-triggered animations
 const useScrollAnimation = () => {
@@ -948,22 +948,28 @@ const ContactSection = () => {
   const [titleRef, titleVisible] = useScrollAnimation();
   const [cardsRef, cardsVisible] = useScrollAnimation();
   const [formRef, formVisible] = useScrollAnimation();
-  const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
-  
-  const typingMessages = [
-    "Hello! I'm interested in your AI & IoT projects. Let's discuss potential collaborations...",
-    "Your portfolio looks amazing! I'd love to learn more about your AWS experience...",
-    "Great work on the gesture control project! Can we talk about implementation details?",
-    "I'm looking for someone with your skills for a new AI project. Are you available?"
-  ];
-  
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentMessageIndex((prev) => (prev + 1) % typingMessages.length);
-    }, 6000); // Change message every 6 seconds
-    
-    return () => clearInterval(interval);
-  }, [typingMessages.length]);
+  const [form, setForm] = useState({ number: '', email: '', message: '' });
+  const [status, setStatus] = useState<'idle' | 'error'>('idle');
+
+  function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  }
+
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    if (!form.number.trim() || !form.email.trim() || !form.message.trim()) {
+      setStatus('error');
+      setTimeout(() => setStatus('idle'), 2000);
+      return;
+    }
+    const base = 'https://wa.me/916350530251';
+    const text = encodeURIComponent(
+      `Number: ${form.number}\nEmail: ${form.email}\nMessage: ${form.message}`
+    );
+    window.open(`${base}?text=${text}`, '_blank');
+    setForm({ number: '', email: '', message: '' });
+    setStatus('idle');
+  }
 
   return (
     <section id="contact" className={`py-20 ${theme.hover}`}>
@@ -1022,6 +1028,22 @@ const ContactSection = () => {
               >
                 <Github className="w-6 h-6" />
               </a>
+              <a
+                href="https://www.instagram.com/b_ha_nu_01?igsh=MThrdTcxdHd1bzdtMg=="
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center w-12 h-12 bg-gradient-to-r from-pink-500 to-yellow-400 text-white rounded-full hover:scale-110 hover:rotate-6 transition-all duration-300"
+              >
+                <Instagram className="w-6 h-6" />
+              </a>
+              <a
+                href="https://wa.me/916350530251"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center w-12 h-12 bg-green-500 text-white rounded-full hover:scale-110 hover:rotate-6 transition-all duration-300"
+              >
+                <MessageCircle className="w-6 h-6" />
+              </a>
             </div>
           </div>
           
@@ -1030,7 +1052,7 @@ const ContactSection = () => {
             
             {/* Typing Animation Section */}
             <div 
-              onClick={() => setCurrentMessageIndex((prev) => (prev + 1) % typingMessages.length)}
+              // onClick={() => setCurrentMessageIndex((prev) => (prev + 1) % typingMessages.length)}
               className="mb-6 p-4 bg-gradient-to-r from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-700 rounded-lg border border-gray-300 dark:border-gray-600 hover:shadow-lg hover:scale-105 transition-all duration-300 cursor-pointer"
             >
               <div className="flex items-center space-x-2 mb-2">
@@ -1041,35 +1063,52 @@ const ContactSection = () => {
                 <span className="text-xs text-gray-500 dark:text-gray-400 ml-auto">Click to change message</span>
               </div>
               <div 
-                key={currentMessageIndex}
+                // key={currentMessageIndex}
                 className="text-gray-900 dark:text-white animate-typing-black"
               >
-                {typingMessages[currentMessageIndex]}
+                {/* {typingMessages[currentMessageIndex]} */}
               </div>
             </div>
             
-            <form className="space-y-4">
+            <form className="space-y-4" onSubmit={handleSubmit}>
               <input
                 type="text"
-                placeholder="Your Name"
-                className={`w-full p-3 ${theme.border} rounded-lg focus:ring-2 focus:ring-purple-500 focus:scale-105 transition-all duration-300 text-gray-900 dark:text-black placeholder-gray-500 dark:placeholder-gray-400 animate-stagger-1`}
+                name="number"
+                placeholder="Your Phone Number"
+                required
+                value={form.number}
+                onChange={handleChange}
+                className={`w-full p-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:scale-105 transition-all duration-300 text-gray-900 dark:text-black placeholder-gray-500 dark:placeholder-gray-400 animate-stagger-1`}
               />
               <input
                 type="email"
+                name="email"
                 placeholder="Your Email"
-                className={`w-full p-3 ${theme.border} rounded-lg focus:ring-2 focus:ring-purple-500 focus:scale-105 transition-all duration-300 text-gray-900 dark:text-black placeholder-gray-500 dark:placeholder-gray-400 animate-stagger-2`}
+                required
+                value={form.email}
+                onChange={handleChange}
+                className={`w-full p-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:scale-105 transition-all duration-300 text-gray-900 dark:text-black placeholder-gray-500 dark:placeholder-gray-400 animate-stagger-2`}
               />
               <textarea
                 rows={4}
-                placeholder="Your Message"
-                className={`w-full p-3 ${theme.border} rounded-lg focus:ring-2 focus:ring-purple-500 focus:scale-105 transition-all duration-300 text-gray-900 dark:text-black placeholder-gray-500 dark:placeholder-gray-400 animate-stagger-3`}
+                name="message"
+                placeholder="Type your WhatsApp message"
+                required
+                value={form.message}
+                onChange={handleChange}
+                className={`w-full p-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:scale-105 transition-all duration-300 text-gray-900 dark:text-black placeholder-gray-500 dark:placeholder-gray-400 animate-stagger-3`}
               />
               <button
                 type="submit"
-                className={`w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3 rounded-lg hover:shadow-lg hover:scale-105 hover:-rotate-1 transition-all duration-300 animate-stagger-4`}
+                className="w-full bg-green-600 text-white py-3 rounded-lg flex items-center justify-center gap-2 hover:shadow-lg hover:scale-105 transition-all duration-300 animate-stagger-4"
               >
-                Send Message
+                Send WhatsApp Message
               </button>
+              {status === 'error' && (
+                <div className="text-red-500 text-sm mt-2 animate-fade-in">
+                  Please fill in all fields before sending.
+                </div>
+              )}
             </form>
           </div>
         </div>
